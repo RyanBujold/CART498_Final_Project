@@ -7,13 +7,7 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 <body>
-    <p id="maze"><pre>
-        #####
-        #E  #
-        ### #
-        #X  #
-        #####
-    </pre></p>
+    <p id="maze"></p>
     <div class="container text-center mt-5">
         <h1 class="display-4">Ask me anything</h1>
         <form method="POST">
@@ -25,8 +19,11 @@
             </div>
         </form>
         
-        <button width="200" height="200" onclick="mazeFunc()">Maze Tester</button>
-        
+        <button width="200" height="200" onclick="displayMaze()">Maze Tester</button>
+        <button width="200" height="200" onclick="moveRight()">Move Right</button>
+        <button width="200" height="200" onclick="moveLeft()">Move Left</button>
+        <button width="200" height="200" onclick="moveUp()">Move Up</button>
+        <button width="200" height="200" onclick="moveDown()">Move Down</button>
 
         {% if result %}
             <h3 class="mt-4">Response:</h3>
