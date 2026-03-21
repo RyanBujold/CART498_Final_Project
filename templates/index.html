@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ask me anything</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-</head>
+    <title>The Lost AI</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 <body>
+    <p id="maze"><pre>
+        #####
+        #E  #
+        ### #
+        #X  #
+        #####
+    </pre></p>
     <div class="container text-center mt-5">
         <h1 class="display-4">Ask me anything</h1>
-        <form method="POST" class="mx-auto col-md-8 col-lg-6">
-            <div class="mb-3">
+        <form method="POST">
+            <div>
                 <textarea name="prompt" rows="4" class="form-control" placeholder="Enter your prompt..."></textarea>
             </div>
-            <div class="d-grid">
+            <div>
                 <input type="submit" value="Submit" class="btn btn-primary">
             </div>
         </form>
         
+        <button width="200" height="200" onclick="mazeFunc()">Maze Tester</button>
+        
+
         {% if result %}
             <h3 class="mt-4">Response:</h3>
             <div class="alert alert-secondary">{{ result }}</div>
