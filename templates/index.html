@@ -7,28 +7,24 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 <body>
-    <p id="maze"></p>
     <div class="container text-center mt-5">
         <h1 class="display-4">Ask me anything</h1>
-        <form method="POST">
+        <form onsubmit="event.preventDefault(); describeSurroundings();">
             <div>
-                <textarea name="prompt" rows="4" class="form-control" placeholder="Enter your prompt..."></textarea>
+                <textarea name="prompt" rows="4" class="form-control" id="prompt-form" placeholder="Enter your prompt..."></textarea>
             </div>
             <div>
                 <input type="submit" value="Submit" class="btn btn-primary">
             </div>
         </form>
+        <p id="response-text" text-wrap="wrap"></p>
+        <p id="maze"></p>
         
         <button width="200" height="200" onclick="displayMaze()">Maze Tester</button>
         <button width="200" height="200" onclick="moveRight()">Move Right</button>
         <button width="200" height="200" onclick="moveLeft()">Move Left</button>
         <button width="200" height="200" onclick="moveUp()">Move Up</button>
         <button width="200" height="200" onclick="moveDown()">Move Down</button>
-
-        {% if result %}
-            <h3 class="mt-4">Response:</h3>
-            <div class="alert alert-secondary">{{ result }}</div>
-        {% endif %}
     </div>
 </body>
 </html>
