@@ -7,24 +7,38 @@
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 <body>
-    <div class="container text-center mt-5">
-        <h1 class="display-4">Ask me anything</h1>
-        <form onsubmit="event.preventDefault(); describeSurroundings();">
-            <div>
-                <textarea name="prompt" rows="4" class="form-control" id="prompt-form" placeholder="Enter your prompt..."></textarea>
-            </div>
-            <div>
-                <input type="submit" value="Submit" class="btn btn-primary">
-            </div>
-        </form>
-        <p id="response-text" text-wrap="wrap"></p>
-        <p id="maze"></p>
-        
-        <button width="200" height="200" onclick="displayMaze()">Maze Tester</button>
-        <button width="200" height="200" onclick="moveRight()">Move Right</button>
-        <button width="200" height="200" onclick="moveLeft()">Move Left</button>
-        <button width="200" height="200" onclick="moveUp()">Move Up</button>
-        <button width="200" height="200" onclick="moveDown()">Move Down</button>
-    </div>
+    <main class="page-shell">
+        <section class="panel">
+            <p class="eyebrow">Interactive Maze Escape</p>
+            <h1>THE LOST AI</h1>
+            <p class="subtitle">Guide the stranded AI through the maze by asking questions, giving directions, and helping it reason its way to the exit.</p>
+
+            <form class="prompt-form" onsubmit="event.preventDefault(); describeSurroundings();">
+                <div>
+                    <label class="sr-only" for="prompt-form">Prompt</label>
+                    <textarea name="prompt" rows="4" class="form-control" id="prompt-form" placeholder="Ask what it sees, suggest a move, or test a strategy..."></textarea>
+                </div>
+                <div class="actions">
+                    <input type="submit" value="Send Prompt" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" onclick="displaySurroundings()">Maze Tester</button>
+                </div>
+            </form>
+
+            <section class="response-panel">
+                <p class="response-label">AI Response</p>
+                <p id="response-text" text-wrap="wrap">Waiting for your first prompt.</p>
+            </section>
+
+            <section class="maze-panel">
+                <p class="response-label">Debug View</p>
+                <p id="maze"></p>
+            </section>
+            
+            <!-- <button width="200" height="200" onclick="moveRight()">Move Right</button>
+            <button width="200" height="200" onclick="moveLeft()">Move Left</button>
+            <button width="200" height="200" onclick="moveUp()">Move Up</button>
+            <button width="200" height="200" onclick="moveDown()">Move Down</button> -->
+        </section>
+    </main>
 </body>
 </html>

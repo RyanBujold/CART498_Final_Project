@@ -1,39 +1,35 @@
 let charPos = {
-    x:1,
-    y:3,
+    x:3,
+    y:4,
 };
-// 0=empty, 1=character, 2=wall
+// 0=empty, 1=character, 2=wall, 3=exit
 let mazeMap = [
-    [2,2,2,2,2],
-    [2,0,0,0,2],
-    [2,2,2,0,2],
-    [2,1,0,0,2],
-    [2,2,2,2,2],
+    [2,2,2,2,2,2,2],
+    [2,3,0,0,0,0,2],
+    [2,2,0,0,2,0,2],
+    [2,2,2,0,2,0,2],
+    [2,0,0,1,0,2,2],
+    [2,2,2,2,2,2,2],
 ]
 
 let surroundings = [
-    [2,2,2],
-    [2,1,0],
-    [2,2,2],
+    [0,0,0],
+    [0,1,0],
+    [0,0,0],
 ]
+updateSurroundings();
 
 function describeSurroundings(){
     let ptext = document.getElementById('prompt-form').value;
 
+    updateSurroundings();
+
     let mazeString = "";
 
-    for (let row = 0; row < surroundings.length; row++) {
-        for (let col = 0; col < surroundings[row].length; col++) {
-            if (surroundings[row][col] === 0) {
-                mazeString += " ";
-            } else if (surroundings[row][col] === 1) {
-                mazeString += "X";
-            } else if (surroundings[row][col] === 2) {
-                mazeString += "#";
-            }
-        }
-        mazeString += "\n";
-    }
+    mazeString+=`north:${surroundings[0][1]},`;
+    mazeString+=`east:${surroundings[1][2]},`;
+    mazeString+=`south:${surroundings[2][1]},`;
+    mazeString+=`west:${surroundings[1][0]}`;
 
     // POST
     fetch('/dm', {
@@ -61,29 +57,38 @@ function describeSurroundings(){
 
             // Should be 'OK' if everything was successful
             console.log(text);
-            checkMove(text);
-            mazeString = text;
-            document.getElementById("response-text").innerHTML = `<pre>${text}</pre>`;
+            text = checkMove(text);
+            document.getElementById("response-text").innerHTML = `<p word-wrap: break-word>${text}</p>`;
     }).catch(function (error) {
         console.error('Fetch error:', error);
-        document.getElementById("response-text").innerHTML = `<pre>${error.message}</pre>`;
+        document.getElementById("response-text").innerHTML = `<p word-wrap: break-word>${error.message}</p>`;
     });
 
 }
 
+function gameWon(){
+    
+}
+
 function checkMove(text){
     if(text.includes("!mr")){
+        text = text.replace("!mr","")
         moveRight();
     }
     else if(text.includes("!ml")){
+        text = text.replace("!ml","")
         moveLeft();
     }
     else if(text.includes("!mu")){
+        text = text.replace("!mu","")
         moveUp();
     }
     else if(text.includes("!md")){
+        text = text.replace("!md","")
         moveDown();
     }
+
+    return text;
 }
 
 function displayMaze() {
@@ -97,6 +102,29 @@ function displayMaze() {
                 mazeString += "X";
             } else if (mazeMap[row][col] === 2) {
                 mazeString += "#";
+            } else if (mazeMap[row][col] === 3) {
+                mazeString += "E";
+            }
+        }
+        mazeString += "\n";
+    }
+
+    document.getElementById("maze").innerHTML = `<pre>${mazeString}</pre>`;
+}
+
+function displaySurroundings() {
+    let mazeString = "";
+
+    for (let row = 0; row < surroundings.length; row++) {
+        for (let col = 0; col < surroundings[row].length; col++) {
+            if (surroundings[row][col] === 0) {
+                mazeString += " ";
+            } else if (surroundings[row][col] === 1) {
+                mazeString += "X";
+            } else if (surroundings[row][col] === 2) {
+                mazeString += "#";
+            } else if (surroundings[row][col] === 3) {
+                mazeString += "E";
             }
         }
         mazeString += "\n";
@@ -129,7 +157,6 @@ function moveRight() {
     }
 
     updateSurroundings();
-    displayMaze();
 }
 
 function moveLeft(){
@@ -142,7 +169,6 @@ function moveLeft(){
     }
 
     updateSurroundings();
-    displayMaze();
 }
 
 function moveUp(){
@@ -155,7 +181,6 @@ function moveUp(){
     }
 
     updateSurroundings();
-    displayMaze();
 }
 
 function moveDown(){
@@ -168,5 +193,4 @@ function moveDown(){
     }
 
     updateSurroundings();
-    displayMaze();
 }
