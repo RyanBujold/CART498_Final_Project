@@ -22,10 +22,10 @@ let surroundings = [
 
 let visitedTiles = mazeMap.map((row) => row.map(() => false));
 const exitPos = findExitPosition();
+let isMazeRevealed = false;
 
 markVisitedTile();
 updateSurroundings();
-displayTravelMap();
 
 function describeSurroundings(auto=false){
     let ptext = "";
@@ -127,6 +127,14 @@ function displayMaze() {
 }
 
 function displayTravelMap() {
+    const mazePanel = document.getElementById("maze-panel");
+
+    isMazeRevealed = true;
+
+    if (mazePanel) {
+        mazePanel.hidden = false;
+    }
+
     let travelMapString = "";
 
     for (let row = 0; row < mazeMap.length; row++) {
@@ -204,7 +212,7 @@ function moveRight() {
     }
     
     updateSurroundings();
-    displayTravelMap();
+    refreshTravelMap();
 }
 
 function moveLeft(){
@@ -224,7 +232,7 @@ function moveLeft(){
     
 
     updateSurroundings();
-    displayTravelMap();
+    refreshTravelMap();
 }
 
 function moveUp(){
@@ -242,7 +250,7 @@ function moveUp(){
     }
 
     updateSurroundings();
-    displayTravelMap();
+    refreshTravelMap();
 }
 
 function moveDown(){
@@ -261,5 +269,32 @@ function moveDown(){
     }
 
     updateSurroundings();
-    displayTravelMap();
+    refreshTravelMap();
+}
+
+function refreshTravelMap() {
+    if (!isMazeRevealed) {
+        return;
+    }
+
+    let travelMapString = "";
+
+    for (let row = 0; row < mazeMap.length; row++) {
+        for (let col = 0; col < mazeMap[row].length; col++) {
+            if (mazeMap[row][col] === 2) {
+                travelMapString += '<span class="maze-wall">#</span>';
+            } else if (charPos.x === col && charPos.y === row) {
+                travelMapString += '<span class="maze-player">X</span>';
+            } else if (exitPos && exitPos.x === col && exitPos.y === row) {
+                travelMapString += '<span class="maze-exit">E</span>';
+            } else if (visitedTiles[row][col]) {
+                travelMapString += '<span class="maze-visited">.</span>';
+            } else {
+                travelMapString += " ";
+            }
+        }
+        travelMapString += "\n";
+    }
+
+    document.getElementById("maze").innerHTML = `<pre>${travelMapString}</pre>`;
 }
