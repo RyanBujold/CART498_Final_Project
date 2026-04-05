@@ -76,10 +76,10 @@ function describeSurroundings(auto=false){
             // Should be 'OK' if everything was successful
             console.log(text);
             text = checkMove(text);
-            document.getElementById("response-text").innerHTML = `<p word-wrap: break-word>${text}</p>`;
+            document.getElementById("response-text").innerHTML = `<pre word-wrap: break-word>${text}</pre>`;
     }).catch(function (error) {
         console.error('Fetch error:', error);
-        document.getElementById("response-text").innerHTML = `<p word-wrap: break-word>${error.message}</p>`;
+        document.getElementById("response-text").innerHTML = `<pre word-wrap: break-word>${error.message}</pre>`;
     });
 
 }

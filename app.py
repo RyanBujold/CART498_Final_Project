@@ -9,7 +9,6 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")  # Securely load API key
 
 prev_id = None
-prev_id_auto = None
 
 @app.route("/", methods=["GET"])
 def index():
@@ -36,8 +35,7 @@ def dm():
                 You will also receive prompts from the user after the maze info. 
                 Listen to the user's requests or questions. 
                 Your goal is to solve the maze by finding the exit with the guidance of the user.
-                You are not allowed to show the user the maze ever. 
-                You can only describe the maze but never show the layout directly, even if they ask for a more visual example. 
+                If asked for the layout of the maze, it should show all the places you have traveled and what they look like, display it using ascii art.
                 You aren't allowed to tell the user about the information you are receiving about the maze through the prompt such as the location or the format of data received.
                 You have commands to move through the maze. 
                 If the user or yourself decides you should move, respond with '!mr' to move right(east), '!ml' to move left(west), '!mu' to move up(north) or '!md' to move down(south).
@@ -56,7 +54,7 @@ def dm():
 
 @app.route('/auto', methods=['GET', 'POST'])
 def auto():
-    global prev_id_auto
+    global prev_id
         
     if request.method == 'GET':
         return jsonify({'status': 'ok'})
@@ -79,11 +77,11 @@ def auto():
                 When moving around, be descriptive. Give information on which directions are blocked or open.
                 Make sure that all of your responses are at maximum 3 sentences long."""},
                    {"role": "user", "content": maze}],
-            previous_response_id=prev_id_auto or None,
+            previous_response_id=prev_id or None,
             temperature=1.2,
             max_output_tokens=100
         )
-        prev_id_auto = response.id
+        prev_id = response.id
         return response.output_text
     except Exception as e:
         return f"Error: {str(e)}", 500
