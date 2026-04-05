@@ -13,6 +13,8 @@
             <h1>THE LOST AI</h1>
             <p class="subtitle">Guide the stranded AI through the maze by asking questions, giving directions, and helping it reason its way to the exit.</p>
 
+            <p id="win-message" class="win-message" hidden>maze solved!</p>
+
             <form class="prompt-form" onsubmit="event.preventDefault(); describeSurroundings();">
                 <div>
                     <label class="sr-only" for="prompt-form">Prompt</label>
@@ -20,7 +22,7 @@
                 </div>
                 <div class="actions">
                     <input type="submit" value="Send Prompt" class="btn btn-primary">
-                    <button type="button" class="btn btn-secondary" onclick="displaySurroundings()">Maze Tester</button>
+                    <button type="button" class="btn btn-secondary" onclick="describeSurroundings(true)">Auto</button>
                 </div>
             </form>
 
@@ -30,14 +32,14 @@
             </section>
 
             <section class="maze-panel">
-                <p class="response-label">Debug View</p>
+                <p class="response-label">Maze View</p>
                 <p id="maze"></p>
             </section>
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" onclick="displayTravelMap()">Reveal Maze</button>
+                <p class="debug-disclaimer">Spoiler warning: this reveals the maze and should only be used for debugging.</p>
+            </div>
             
-            <!-- <button width="200" height="200" onclick="moveRight()">Move Right</button>
-            <button width="200" height="200" onclick="moveLeft()">Move Left</button>
-            <button width="200" height="200" onclick="moveUp()">Move Up</button>
-            <button width="200" height="200" onclick="moveDown()">Move Down</button> -->
         </section>
     </main>
 </body>

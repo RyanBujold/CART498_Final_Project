@@ -119,6 +119,7 @@ h1 {
     gap: 12px;
     margin-top: 16px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .btn {
@@ -189,6 +190,46 @@ h1 {
     font-family: "Courier New", monospace;
     background: #111111;
     color: #f3f3f3;
+}
+
+.maze-wall {
+    color: #f3f3f3;
+}
+
+.maze-player {
+    color: #ffd166;
+    font-weight: 700;
+}
+
+.maze-exit {
+    color: #7cc6fe;
+    font-weight: 700;
+}
+
+.maze-visited {
+    color: #4ade80;
+    font-weight: 700;
+}
+
+.win-message {
+    margin: 22px 0 0;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(30, 122, 74, 0.22);
+    background: #e9f8ef;
+    color: #16613d;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.debug-disclaimer {
+    margin: 0;
+    max-width: 42ch;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #7a4d10;
 }
 
 .sr-only {

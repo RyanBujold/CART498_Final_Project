@@ -1,15 +1,17 @@
 let charPos = {
-    x:3,
-    y:4,
+    x:4,
+    y:6,
 };
 // 0=empty, 1=character, 2=wall, 3=exit
 let mazeMap = [
-    [2,2,2,2,2,2,2],
-    [2,3,0,0,0,0,2],
-    [2,2,0,0,2,0,2],
-    [2,2,2,0,2,0,2],
-    [2,0,0,1,0,2,2],
-    [2,2,2,2,2,2,2],
+    [2,2,2,2,2,2,2,2],
+    [2,0,2,3,0,2,0,2],
+    [2,0,2,2,0,2,0,2],
+    [2,0,0,0,0,0,0,2],
+    [2,0,2,0,2,2,2,2],
+    [2,0,2,0,0,2,0,2],
+    [2,0,0,2,1,0,0,2],
+    [2,2,2,2,2,2,2,2],
 ]
 
 let surroundings = [
@@ -17,10 +19,25 @@ let surroundings = [
     [0,1,0],
     [0,0,0],
 ]
-updateSurroundings();
 
-function describeSurroundings(){
-    let ptext = document.getElementById('prompt-form').value;
+let visitedTiles = mazeMap.map((row) => row.map(() => false));
+const exitPos = findExitPosition();
+
+markVisitedTile();
+updateSurroundings();
+displayTravelMap();
+
+function describeSurroundings(auto=false){
+    let ptext = "";
+    let fetchType = '/dm';
+
+    if(!auto){
+       ptext = document.getElementById('prompt-form').value;
+    }
+    else {
+        fetchType = '/auto'; 
+    }
+    
 
     updateSurroundings();
 
@@ -31,8 +48,9 @@ function describeSurroundings(){
     mazeString+=`south:${surroundings[2][1]},`;
     mazeString+=`west:${surroundings[1][0]}`;
 
+
     // POST
-    fetch('/dm', {
+    fetch(fetchType, {
 
         // Declare what type of data we're sending
         headers: {
@@ -64,10 +82,6 @@ function describeSurroundings(){
         document.getElementById("response-text").innerHTML = `<p word-wrap: break-word>${error.message}</p>`;
     });
 
-}
-
-function gameWon(){
-    
 }
 
 function checkMove(text){
@@ -112,25 +126,27 @@ function displayMaze() {
     document.getElementById("maze").innerHTML = `<pre>${mazeString}</pre>`;
 }
 
-function displaySurroundings() {
-    let mazeString = "";
+function displayTravelMap() {
+    let travelMapString = "";
 
-    for (let row = 0; row < surroundings.length; row++) {
-        for (let col = 0; col < surroundings[row].length; col++) {
-            if (surroundings[row][col] === 0) {
-                mazeString += " ";
-            } else if (surroundings[row][col] === 1) {
-                mazeString += "X";
-            } else if (surroundings[row][col] === 2) {
-                mazeString += "#";
-            } else if (surroundings[row][col] === 3) {
-                mazeString += "E";
+    for (let row = 0; row < mazeMap.length; row++) {
+        for (let col = 0; col < mazeMap[row].length; col++) {
+            if (mazeMap[row][col] === 2) {
+                travelMapString += '<span class="maze-wall">#</span>';
+            } else if (charPos.x === col && charPos.y === row) {
+                travelMapString += '<span class="maze-player">X</span>';
+            } else if (exitPos && exitPos.x === col && exitPos.y === row) {
+                travelMapString += '<span class="maze-exit">E</span>';
+            } else if (visitedTiles[row][col]) {
+                travelMapString += '<span class="maze-visited">.</span>';
+            } else {
+                travelMapString += " ";
             }
         }
-        mazeString += "\n";
+        travelMapString += "\n";
     }
 
-    document.getElementById("maze").innerHTML = `<pre>${mazeString}</pre>`;
+    document.getElementById("maze").innerHTML = `<pre>${travelMapString}</pre>`;
 }
 
 function updateSurroundings(){
@@ -147,50 +163,103 @@ function updateSurroundings(){
     surroundings[2][2] = mazeMap[charPos.y+1][charPos.x+1];
 }
 
+function findExitPosition() {
+    for (let row = 0; row < mazeMap.length; row++) {
+        for (let col = 0; col < mazeMap[row].length; col++) {
+            if (mazeMap[row][col] === 3) {
+                return { x: col, y: row };
+            }
+        }
+    }
+
+    return null;
+}
+
+function markVisitedTile() {
+    visitedTiles[charPos.y][charPos.x] = true;
+}
+
+function gameWon(){
+    const winMessage = document.getElementById("win-message");
+
+    if (winMessage) {
+        winMessage.hidden = false;
+    }
+    console.log("GAME WIN TRIGGERED");
+}
+
 function moveRight() {
+    //Check for win
+    if(mazeMap[charPos.y][charPos.x+1] == 3){
+        gameWon();
+    }
+
     //Check if we hit a wall
     if(mazeMap[charPos.y][charPos.x+1] != 2){
         //Move
         mazeMap[charPos.y][charPos.x] = 0;
         charPos.x++;
         mazeMap[charPos.y][charPos.x] = 1;
+        markVisitedTile();
     }
-
+    
     updateSurroundings();
+    displayTravelMap();
 }
 
 function moveLeft(){
+    //Check for win
+    if(mazeMap[charPos.y][charPos.x-1] == 3){
+        gameWon();
+    }
+
     //Check if we hit a wall
     if(mazeMap[charPos.y][charPos.x-1] != 2){
         //Move
         mazeMap[charPos.y][charPos.x] = 0;
         charPos.x--;
         mazeMap[charPos.y][charPos.x] = 1;
+        markVisitedTile();
     }
+    
 
     updateSurroundings();
+    displayTravelMap();
 }
 
 function moveUp(){
+    //Check for win
+    if(mazeMap[charPos.y-1][charPos.x] == 3){
+        gameWon();
+    }
     //Check if we hit a wall
     if(mazeMap[charPos.y-1][charPos.x] != 2){
         //Move
         mazeMap[charPos.y][charPos.x] = 0;
         charPos.y--;
         mazeMap[charPos.y][charPos.x] = 1;
+        markVisitedTile();
     }
 
     updateSurroundings();
+    displayTravelMap();
 }
 
 function moveDown(){
+    //Check for win
+    if(mazeMap[charPos.y+1][charPos.x] == 3){
+        gameWon();
+    }
+
     //Check if we hit a wall
     if(mazeMap[charPos.y+1][charPos.x] != 2){
         //Move
         mazeMap[charPos.y][charPos.x] = 0;
         charPos.y++;
         mazeMap[charPos.y][charPos.x] = 1;
+        markVisitedTile();
     }
 
     updateSurroundings();
+    displayTravelMap();
 }

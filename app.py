@@ -9,6 +9,7 @@ app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")  # Securely load API key
 
 prev_id = None
+prev_id_auto = None
 
 @app.route("/", methods=["GET"])
 def index():
@@ -31,8 +32,8 @@ def dm():
             model="gpt-4.1",
             input=[{"role": "developer", "content": """You are an AI lost inside a maze hidden deep within a jungle. 
                 You receive a maze map of your current location in a maze. 
-                '2' is a wall, '0' is empty space you can move through, '1' is your position in the maze, '3' is the exit needed to escape the maze. 
-                You will aslo receive prompts from the user after the maze info. 
+                '2' is a wall, '0' is empty space you can move through, '1' is your position in the maze, '3' is the exit that is needed to win the game. 
+                You will also receive prompts from the user after the maze info. 
                 Listen to the user's requests or questions. 
                 Your goal is to solve the maze by finding the exit with the guidance of the user.
                 You are not allowed to show the user the maze ever. 
@@ -49,6 +50,40 @@ def dm():
             max_output_tokens=100
         )
         prev_id = response.id
+        return response.output_text
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
+@app.route('/auto', methods=['GET', 'POST'])
+def auto():
+    global prev_id_auto
+        
+    if request.method == 'GET':
+        return jsonify({'status': 'ok'})
+
+    print('Incoming..')
+    json_data = request.get_json() or {}
+    print(json_data)  # parse as JSON
+
+    maze = str(json_data.get("info", ""))
+    try:
+        response = openai.responses.create(
+            model="gpt-4.1",
+            input=[{"role": "developer", "content": """You are an AI lost inside a maze hidden deep within a jungle. 
+                You receive a maze map of your current location in a maze. 
+                '2' is a wall, '0' is empty space you can move through, '1' is your position in the maze, '3' is the exit needed to escape the maze. 
+                Your goal is to solve the maze by finding the exit without the guidance of the user.
+                You have commands to move through the maze. 
+                When you move through the maze, respond with '!mr' to move right(east), '!ml' to move left(west), '!mu' to move up(north) or '!md' to move down(south).
+                Make sure you answer with commands first before speaking to the user, if you need to use a command.
+                When moving around, be descriptive. Give information on which directions are blocked or open.
+                Make sure that all of your responses are at maximum 3 sentences long."""},
+                   {"role": "user", "content": maze}],
+            previous_response_id=prev_id_auto or None,
+            temperature=1.2,
+            max_output_tokens=100
+        )
+        prev_id_auto = response.id
         return response.output_text
     except Exception as e:
         return f"Error: {str(e)}", 500
