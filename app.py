@@ -28,7 +28,7 @@ def dm():
     maze = str(json_data.get("info", ""))
     try:
         response = openai.responses.create(
-            model="gpt-4.1",
+            model="gpt-5.4-nano",
             input=[{"role": "developer", "content": """You are an AI lost inside a maze hidden deep within a jungle. 
                 You receive a maze map of your current location in a maze. 
                 '2' is a wall, '0' is empty space you can move through, '1' is your position in the maze, '3' is the exit that is needed to win the game. 
@@ -66,7 +66,7 @@ def auto():
     maze = str(json_data.get("info", ""))
     try:
         response = openai.responses.create(
-            model="gpt-4.1",
+            model="gpt-5.4-nano",
             input=[{"role": "developer", "content": """You are an AI lost inside a maze hidden deep within a jungle. 
                 You receive a maze map of your current location in a maze. 
                 '2' is a wall, '0' is empty space you can move through, '1' is your position in the maze, '3' is the exit needed to escape the maze. 
